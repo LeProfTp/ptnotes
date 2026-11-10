@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>PT Feedback W26</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow column, like a graded transcript – code gate on top, then one block per Prüfungsteil */
+:root{
+  --bg:#15131c; --panel:#1f1c29; --line:#332f40; --fg:#f2eee6; --muted:#b9b3c7; --dim:#8a8598;
+  --accent:#ff7a45; --accent-ink:#15131c; --blue:#8fa8ff; --bad:#ff8f8f;
+  --display:'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --body:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#f4f1ea; --panel:#ffffff; --line:#e0d9cc; --fg:#15131c; --muted:#4a4655; --dim:#6b6676;
+  --accent:#c4410f; --accent-ink:#ffffff; --blue:#3d55b8; --bad:#b42318; color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#f4f1ea; --panel:#ffffff; --line:#e0d9cc; --fg:#15131c; --muted:#4a4655; --dim:#6b6676;
+  --accent:#c4410f; --accent-ink:#ffffff; --blue:#3d55b8; --bad:#b42318; color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 var(--body);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.wrap{max-width:760px;margin:0 auto;padding-block:56px 80px;display:flex;flex-direction:column;gap:40px}
+.eyebrow{font:600 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font:800 clamp(40px,8vw,64px)/1 var(--display);letter-spacing:-.02em;margin:10px 0 14px;text-wrap:balance}
+h2{font:700 28px/1.15 var(--display);margin:0;text-wrap:balance}
+h3{font:700 20px/1.2 var(--display);margin:0}
+p{margin:0}
+.lead{color:var(--muted);max-width:60ch}
+form{display:flex;gap:10px;flex-wrap:wrap}
+label.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+input{flex:1 1 220px;min-width:0;font:600 20px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+input::placeholder{color:var(--dim);letter-spacing:.04em}
+input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button{font:600 16px/1 var(--body);padding:14px 20px;border-radius:8px;border:0;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+button[disabled]{opacity:.6;cursor:wait}
+.msg{font-size:14px;color:var(--bad);min-height:1.4em}
+.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.parts div{background:var(--panel);padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.parts .s{font:600 12px/1.3 var(--mono);color:var(--dim);letter-spacing:.08em}
+.parts .n{font-weight:600;font-size:14px;line-height:1.3}
+.parts .m{font:12px/1.3 var(--mono);color:var(--muted)}
+@media (max-width:560px){.parts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team{display:flex;flex-direction:column;gap:20px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.members{color:var(--muted);font-size:14px}
+.total{text-align:right}
+.total b{font:800 44px/1 var(--display);font-variant-numeric:tabular-nums}
+.total span{display:block;font:12px/1.4 var(--mono);color:var(--dim);letter-spacing:.06em}
+.bar{display:flex;gap:4px;height:10px}
+.bar i{display:block;height:100%;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.bar i u{position:absolute;inset:0 auto 0 0;background:var(--accent);text-decoration:none}
+.part{border-top:1px solid var(--line);padding-top:24px;display:flex;flex-direction:column;gap:16px}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.ph .s{font:600 12px/1.4 var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.pts{font:700 28px/1 var(--display);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pts small{font:500 14px var(--mono);color:var(--dim)}
+.pill{font:600 12px/1 var(--mono);letter-spacing:.06em;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.topic{color:var(--muted)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media (max-width:640px){.cols{grid-template-columns:1fr}}
+.cols h4{font:600 12px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px}
+.cols .plus h4{color:var(--blue)}
+.cols .next h4{color:var(--accent)}
+ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+li{padding-left:2px}
+.foot{font-size:13px;color:var(--dim);border-top:1px solid var(--line);padding-top:20px}
+@media (prefers-reduced-motion:no-preference){.team{animation:in .35s ease-out}@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}}
+</style>
+
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Praxis Transformationsmanagement · Winter 2026</p>
+    <h1>Ihr Feedback</h1>
+    <p class="lead">Hier sehen Sie Punkte und Rückmeldung zu jedem Prüfungsteil Ihres Teams. Geben Sie den Zugangscode ein, den Ihr Team von Prof. Petzold erhalten hat.</p>
+  </header>
+
+  <section id="gate" aria-labelledby="gate-h">
+    <h2 id="gate-h" class="sr" hidden>Zugang</h2>
+    <form id="f" autocomplete="off">
+      <label class="sr" for="code">Zugangscode</label>
+      <input id="code" name="code" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false" autocapitalize="characters">
+      <button id="go" type="submit">Feedback öffnen</button>
+    </form>
+    <p id="msg" class="msg" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="overview" aria-label="Prüfungsteile">
+    <div class="parts" id="parts"></div>
+  </section>
+
+  <section id="result" class="team" hidden aria-live="polite"></section>
+
+  <p class="foot">Diese Seite ist ein informelles Feedback zu Ihren Prüfungsteilen. Verbindlich ist allein die Note, die Ihnen über Trainex mitgeteilt wird. Die Gesamtnote ergibt sich aus der Summe aller vier Prüfungsteile (100 Punkte). Fragen zur Bewertung gern in der nächsten Session oder per Mail.</p>
+</main>
+
+<script>
+const DATA = {"parts":[{"id":"p1","name":"Best-Practice-Showcase","session":"S03","max":20},{"id":"p2","name":"Use Cases + Jobprofile","session":"S06","max":25},{"id":"p3","name":"Midterm-Systemskizze","session":"S10","max":25},{"id":"p4","name":"Prototyp + Pitch","session":"S15","max":30}],"iter":150000,"entries":[{"s":"RhD1IejXrYkdiCyQ97+kzA==","i":"9Rre65CSKJxMUWff","c":"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"},{"s":"rDrKH4kSMjlSD4Ym5W08Fg==","i":"jkwaKJsA3ZJW33qt","c":"fzOIqzKqcbgr/dZhcOj/UgFLKY/ly/US7I74nrxH/kZ9Y5V/DG6Re9IAzSTpjOwIUM2cSmaUw8MQGj0rGoC9pYuO35PP58SIX2d6PRhoIxux5IIO6V1oPuvYTLAC5WXlnEEmhfg+hqrcD2gBWiS7VJdorrpCorHBR/eIM+/F1VJprhcK0BMuoCFpKMPL7Cv9tpvOuEigzkiQm1NHEmjqz9lwWeYeF682xgWD/ELHr1Ygbfu1QNbCe0hfIFc83bleD+Hs7vuW8TKYik7I5Suf9Lc5QqlP5I0uz2J+OOMpoczh/zJQ1yxbRw6fT+88SDyYs8/yjmYvvZtOFuFdnm/VQoVAyrCpreQM79U8NbIkkx8V7SVSu5igJ3+gB4o8cYPPTebhmbx6z+JgTZmi0ZV/XVv+4gyf69EEVBIrmVQHAsLyflF+v615W4oORWYyXoOjdzg4+BSPRodIFJ2uZcFfl/fiCPl293UMtF8kjwF3PpaGnzolOc0VmstV5H3nel1GgEprPCZxk92qK5DeoH2UO1YL18NAEPN8L37Nwm+vuHgi43GDMZozYO8lw4FMmZ4bfzHjFwu+PRuuDaY/nyHCvVNeebXwZ4Gx+m95ivO3bNNq8T5D3FWWsQW5nc1QRJxo0AQAeA5k8iCkWBiCDFG8UyMUVCT+e1TntL6wgjWh6AamsW5ZFWgRWCGj81t3ymZV95n70GyB4D1xqfoYsQx0mZWrYkL/HIStqdi53ZdiwobBXUruaOtkh/UJdjQS0dQcujHtmqZI/LoICQmCzedo2AFvLGudMx0uAfKPOpLhH+YKSYPmm3R+ZM2x4N0G"},{"s":"FJodRwLNfXFrauBy+hekTA==","i":"xOGZQ1ju5utsdTci","c":"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"},{"s":"tz38CK0umjkR8WBVXnyXhQ==","i":"w40QwbG54nOGJQc8","c":"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"}]};
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const norm = s => s.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+$('#parts').innerHTML = DATA.parts.map(p =>
+  `<div><span class="s">${esc(p.session)}</span><span class="n">${esc(p.name)}</span><span class="m">${p.max} Punkte</span></div>`).join('');
+
+async function tryOpen(code) {
+  const pass = new TextEncoder().encode(norm(code));
+  const base = await crypto.subtle.importKey('raw', pass, 'PBKDF2', false, ['deriveKey']);
+  for (const e of DATA.entries) {
+    const key = await crypto.subtle.deriveKey({name:'PBKDF2', salt:b64(e.s), iterations:DATA.iter, hash:'SHA-256'},
+      base, {name:'AES-GCM', length:256}, false, ['decrypt']);
+    try {
+      const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(e.i)}, key, b64(e.c));
+      return JSON.parse(new TextDecoder().decode(pt));
+    } catch (_) { /* not this team */ }
+  }
+  return null;
+}
+
+function render(t) {
+  const got = DATA.parts.filter(p => t.results[p.id]);
+  const sum = got.reduce((a, p) => a + t.results[p.id].points, 0);
+  const maxSoFar = got.reduce((a, p) => a + p.max, 0);
+  const bar = DATA.parts.map(p => {
+    const r = t.results[p.id]; const w = r ? (r.points / p.max * 100) : 0;
+    return `<i style="flex:${p.max}" title="${esc(p.name)}"><u style="width:${w}%"></u></i>`;
+  }).join('');
+  const parts = DATA.parts.map(p => {
+    const r = t.results[p.id];
+    if (!r) return `<article class="part"><div class="ph"><div><p class="s">${esc(p.session)} · ${esc(p.name)}</p></div><span class="pill">noch offen · ${p.max} P.</span></div></article>`;
+    return `<article class="part">
+      <div class="ph"><div><p class="s">${esc(p.session)} · ${esc(p.name)}</p><h3>${esc(r.topic || '')}</h3></div>
+      <span class="pts">${String(r.points).replace('.', ',')} <small>/ ${p.max}</small></span></div>
+      <div class="cols">
+        <div class="plus"><h4>Das trägt</h4><ul>${(r.strengths||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div class="next"><h4>Für den nächsten Teil</h4><ul>${(r.next||[]).map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+      </div></article>`;
+  }).join('');
+  $('#result').innerHTML = `
+    <div class="head">
+      <div><p class="eyebrow">Ihr Team</p><h2>${esc(t.team)}</h2>${t.members ? `<p class="members">${esc(t.members)}</p>` : ''}</div>
+      <div class="total"><b>${String(sum).replace('.', ',')}</b><span>von ${maxSoFar} Punkten bisher · ${got.length} von ${DATA.parts.length} Teilen bewertet</span></div>
+    </div>
+    <div class="bar" aria-hidden="true">${bar}</div>
+    ${parts}
+    <div><button class="ghost" id="lock" type="button">Schließen</button></div>`;
+  $('#result').hidden = false; $('#overview').hidden = true; $('#gate').hidden = true;
+  $('#lock').addEventListener('click', () => {
+    $('#result').hidden = true; $('#result').innerHTML = ''; $('#overview').hidden = false; $('#gate').hidden = false;
+    $('#code').value = ''; $('#code').focus();
+  });
+}
+
+$('#f').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const code = $('#code').value.trim();
+  if (!norm(code)) { $('#msg').textContent = 'Bitte geben Sie Ihren Zugangscode ein.'; return; }
+  $('#go').disabled = true; $('#msg').textContent = '';
+  try {
+    const t = await tryOpen(code);
+    if (t) render(t);
+    else $('#msg').textContent = 'Dieser Code passt zu keinem Team. Prüfen Sie die Schreibweise; Groß- und Kleinschreibung spielen keine Rolle.';
+  } catch (_) {
+    $('#msg').textContent = 'Ihr Browser konnte den Code nicht prüfen. Versuchen Sie es bitte in einem aktuellen Browser erneut.';
+  } finally { $('#go').disabled = false; }
+});
+</script>
+</body>
+</html>
